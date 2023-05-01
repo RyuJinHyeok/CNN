@@ -1,0 +1,22 @@
+
+device = 'cpu'
+
+SR = 44100
+max_len = 4
+n_mfcc = 40
+
+# 에포크 설정
+num_epochs = 100
+
+# 배치 사이즈 설정
+batch_size = 32
+
+# dir_dataset
+dir_train = 'CapsNet/data/train/'
+dir_validation = 'CapsNet/data/validation/'
+dir_test = 'CapsNet/data/test/'
+
+# dir_result
+model_name = 'example'
+model_save = 'CNN/model/%s/' % model_name
+result_save = 'CNN/result/%s/' % model_name
