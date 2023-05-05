@@ -39,11 +39,11 @@ def dataset_save():
     train_X = preprocess_dataset(train_x)
     valid_X = preprocess_dataset(valid_x)
 
-    np.save("./train_X_SAVE",train_X)
-    np.save("./valid_X_SAVE",valid_X)
+    np.save("CNN/data/train_X_SAVE",train_X)
+    np.save("CNN/data/valid_X_SAVE",valid_X)
 
-    np.save("./train_y_SAVE",train_y)
-    np.save("./valid_y_SAVE",valid_y)
+    np.save("CNN/data/train_y_SAVE",train_y)
+    np.save("CNN/data/valid_y_SAVE",valid_y)
 
 # -------- NOTICE ----------
 # you must modify config.py to suit your environment // 실행 시키기 전, config.py를 수정하세요.
@@ -57,20 +57,20 @@ seed_everything(929)
 # mode 3 : start from test data processing + eval
 
 
-mode = 1 
+mode = 3
 
 if mode == 1:  # Train data save
     dataset_save()
 
-elif mode ==2: # Train
-    train_X_save_load = np.load("train_X_SAVE.npy")
-    valid_X_save_load = np.load("valid_X_SAVE.npy")
-    train_y_save_load = np.load("train_y_SAVE.npy")
-    valid_y_save_load = np.load("valid_y_SAVE.npy")
+elif mode == 2: # Train
+    train_X_save_load = np.load("CNN/data/train_X_SAVE.npy")
+    valid_X_save_load = np.load("CNN/data/valid_X_SAVE.npy")
+    train_y_save_load = np.load("CNN/data/train_y_SAVE.npy")
+    valid_y_save_load = np.load("CNN/data/valid_y_SAVE.npy")
 
-    fit(train_X_save_load, train_y_save_load, valid_X_save_load, valid_y_save_load, train_X_save_load.shape[2])
+    fit(train_X_save_load, train_y_save_load, valid_X_save_load, valid_y_save_load, train_X_save_load.shape[3])
 
-elif mode==3:
+elif mode == 3:
     test_wav = test_dataset()
     evaluation_all(test_wav)
 

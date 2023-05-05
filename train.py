@@ -28,7 +28,7 @@ def fit(train_X, train_y, valid_X, valid_y, mfcc_y):
     optimizer = torch.optim.SGD(params = model.parameters(), lr = 1e-3 )
     scheduler = None
 
-    model(torch.rand(batch_size, n_mfcc, mfcc_y, 1).to(device))
+    model(torch.rand(batch_size, 1, n_mfcc, mfcc_y).to(device))
 
     train(model, criterion, optimizer, train_loader, valid_loader, scheduler, device)
 

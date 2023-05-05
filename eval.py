@@ -62,6 +62,9 @@ def result(df,preds,expInfo=None): # 결과 생성
     
 
     ''' 평가용 결과 출력'''
+    import os
+    if not os.path.exists(result_save):
+        os.makedirs(result_save)
 
     """1. Confusion_matrix 출력"""
     cm = confusion_matrix(answer_arr,preds) # 정답(x축)값, 예측(Y축)값을 이용하여 Confusion Matrix 계산
@@ -88,7 +91,7 @@ def result(df,preds,expInfo=None): # 결과 생성
     acc_report = "%s 모델의 Test 정확도 (합산) : "%model_name+'{:.4f}'.format(acc)
     print(acc_report)  #결과 출력
 
-    with open("%s/acuracy_report.txt" %result_save , "w") as f:
+    with open("%s/acuracy_report.txt" %result_save , "w", encoding='utf-8') as f:
         f.write(acc_report)
 
     # 분류 보고서 생성
