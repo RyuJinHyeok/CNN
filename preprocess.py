@@ -33,4 +33,5 @@ def preprocess_dataset(data):
         mfccs.append(extracted_features)
             
     mfccs = np.array(mfccs)
-    return mfccs.reshape(-1, mfccs.shape[1], mfccs.shape[2], 1)
+
+    return mfccs.reshape(-1, 1, mfccs.shape[1], mfccs.shape[2])
