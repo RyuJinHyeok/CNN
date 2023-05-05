@@ -99,8 +99,12 @@ def result(df,preds,expInfo=None): # 결과 생성
     print(report)
  
     # 결과를 json으로 저장
-    with open("%s/classification_report_%s.json" %(result_save,expInfo), "w") as outfile:
-        json.dump(report, outfile)
+    # with open("%s/classification_report_%s.json" %(result_save,expInfo), "w") as outfile:
+    #     json.dump(report, outfile)
+
+    # 결과를 txt로 저장
+    with open("%s/classification_report_%s.txt" %(result_save,expInfo), "w") as f:
+        f.write(report)
 
     
 
