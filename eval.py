@@ -186,7 +186,7 @@ def evaluation_all(test_wav):
     preds = predict(model, test_loader, device)
     df = test_wav.copy()
     del test_wav
-    result(df,preds,expInfo='1')
+    result(df,preds,expInfo=model_name)
 
 
 
