@@ -3,6 +3,7 @@
 '''
 수정 로그
 # 23.05.04 Run 프로그램 실행 모드 선택 기능 추가
+# 23.05.05 dataSet_save 함수 추가 
 '''
 from dataset import *
 from preprocess import *
@@ -25,21 +26,7 @@ def seed_everything(seed):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = True
 
-
-
-# -------- NOTICE ----------
-# you must modify config.py to suit your environment // 실행 시키기 전, config.py를 수정하세요.
-
-seed_everything(929)
-
-''' Run mode Setting'''
-Train = False # 학습 모드
-Test = True # 평가모드
-#Test_set_gen = True # True : 테스트용 학습 데이터를 생성한 후 평가 시행 , False : 
-
-
-if Train == True:
-    # load data
+def dataset_save():
     train_wav = train_dataset()
     valid_wav = valid_dataset()
 
@@ -48,15 +35,42 @@ if Train == True:
 
     train_x = set_length(train_x)
     valid_x = set_length(valid_x)
-    
-    # data preprocessing (zero-padding, mfcc)
+        
     train_X = preprocess_dataset(train_x)
     valid_X = preprocess_dataset(valid_x)
- 
-    # train
-    fit(train_X, train_y, valid_X, valid_y, train_X.shape[2])
 
-if Test ==True:
+    np.save("./train_X_SAVE",train_X)
+    np.save("./valid_X_SAVE",valid_X)
+
+    np.save("./train_y_SAVE",train_y)
+    np.save("./valid_y_SAVE",valid_y)
+
+# -------- NOTICE ----------
+# you must modify config.py to suit your environment // 실행 시키기 전, config.py를 수정하세요.
+
+seed_everything(929)
+
+''' Run mode Setting'''
+# mode 0 : Not working
+# mode 1 : Train data processing
+# mode 2 : training mode
+# mode 3 : start from test data processing + eval
+
+
+mode = 1 
+
+if mode == 1:  # Train data save
+    dataset_save()
+
+elif mode ==2: # Train
+    train_X_save_load = np.load("train_X_SAVE.npy")
+    valid_X_save_load = np.load("valid_X_SAVE.npy")
+    train_y_save_load = np.load("train_y_SAVE.npy")
+    valid_y_save_load = np.load("valid_y_SAVE.npy")
+
+    fit(train_X_save_load, train_y_save_load, valid_X_save_load, valid_y_save_load, train_X_save_load.shape[2])
+
+elif mode==3:
     test_wav = test_dataset()
-    # evaluation
     evaluation_all(test_wav)
+
