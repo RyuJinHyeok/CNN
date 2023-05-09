@@ -178,7 +178,12 @@ def eval(test_wav):     # Test 데이터 전처리 포함됨.
 def evaluation_all(test_wav):
     test_x = np.array(test_wav.data)
     test_x = set_length(test_x)
-    test_X = preprocess_dataset(test_x)
+
+    if mode == 'spec':
+        import spectrogram as sp
+        test_X = sp.preprocess_dataset(test_x)
+    elif mode == 'mfcc':
+        test_X = preprocess_dataset(test_x)
 
     test_data = CustomDataset(X=test_X, y= None, train_mode=False)
     test_loader = DataLoader(test_data, batch_size = batch_size, shuffle=False)

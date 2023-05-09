@@ -14,7 +14,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def fit(train_X, train_y, valid_X, valid_y, mfcc_y):
-    # device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu') #GPU 할당
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu') #GPU 할당
+    print(device)
 
     train_data = CustomDataset(X=train_X, y=train_y)
     train_loader = DataLoader(train_data, batch_size = batch_size, shuffle=True)
@@ -25,10 +26,15 @@ def fit(train_X, train_y, valid_X, valid_y, mfcc_y):
 
     model = CNNclassification().to(device)
     criterion = torch.nn.CrossEntropyLoss().to(device)
-    optimizer = torch.optim.SGD(params = model.parameters(), lr = 1e-3 )
+    optimizer = torch.optim.SGD(params = model.parameters(), lr = LR )
     scheduler = None
 
-    model(torch.rand(batch_size, 1, n_mfcc, mfcc_y).to(device))
+    import torchsummary
+    if mode == 'spec':
+        torchsummary.summary(model, (1, 128, 345))
+
+    # model(torch.rand(batch_size, 1, n_mfcc, mfcc_y).to(device))
+    model(torch.rand(batch_size, 1, 128, mfcc_y).to(device)) #spec
 
     train(model, criterion, optimizer, train_loader, valid_loader, scheduler, device)
 
@@ -87,7 +93,7 @@ def train(model, criterion, optimizer, train_loader, valid_loader, scheduler, de
                 
                 wav, label = wav.to(device), label.to(device)
                 logit = model(wav)
-                vali_loss += criterion(logit, label)
+                vali_loss += criterion(logit, label).item()
                 pred = logit.argmax(dim=1, keepdim=True)  #10개의 class중 가장 값이 높은 것을 예측 label로 추출
                 correct += pred.eq(label.view_as(pred)).sum().item() #예측값과 실제값이 맞으면 1 아니면 0으로 합산
         vali_acc = 100 * correct / len(valid_loader.dataset)
@@ -113,7 +119,7 @@ def train(model, criterion, optimizer, train_loader, valid_loader, scheduler, de
         plt.plot(x, train, label='train')
         plt.plot(x, val, label='validation')
 
-        plt.title('accuracy')
+        plt.title('accuracy' if mode == 0 else 'loss')
         plt.xlabel('epoch')
         plt.ylabel('accuracy' if mode == 0 else 'loss')
 

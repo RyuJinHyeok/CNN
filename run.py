@@ -63,10 +63,10 @@ if mode == 1:  # Train data save
     dataset_save()
 
 elif mode == 2: # Train
-    train_X_save_load = np.load("CNN/data/train_X_SAVE.npy")
-    valid_X_save_load = np.load("CNN/data/valid_X_SAVE.npy")
-    train_y_save_load = np.load("CNN/data/train_y_SAVE.npy")
-    valid_y_save_load = np.load("CNN/data/valid_y_SAVE.npy")
+    train_X_save_load = np.load("CNN/data/spec/train_X_SAVE.npy")
+    valid_X_save_load = np.load("CNN/data/spec/valid_X_SAVE.npy")
+    train_y_save_load = np.load("CNN/data/spec/train_y_SAVE.npy")
+    valid_y_save_load = np.load("CNN/data/spec/valid_y_SAVE.npy")
 
     fit(train_X_save_load, train_y_save_load, valid_X_save_load, valid_y_save_load, train_X_save_load.shape[3])
 
