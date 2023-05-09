@@ -6,6 +6,8 @@ import librosa
 import pandas as pd
 import numpy as np
 
+
+# Wav 파일 : col1 = wav signal, col2 = 정답 lable (파일 이름에서 추출) --> Pandas dataFrame 반환
 def train_dataset():
     dataset = []
     for file in tqdm(os.listdir(dir_train),colour='green'):
