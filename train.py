@@ -5,7 +5,7 @@ from cnnlayers import *
 import torch
 import torch.optim as optim # 최적화 알고리즘들이 포함됨
 from torch.utils.data import DataLoader # 학습 및 배치로 모델에 넣어주기 위한 툴
-
+import torchsummary # 모델 요약
 
 from tqdm.auto import tqdm
 import os
@@ -23,18 +23,21 @@ def fit(train_X, train_y, valid_X, valid_y, mfcc_y):
     valid_data = CustomDataset(X=valid_X, y=valid_y)
     valid_loader = DataLoader(valid_data, batch_size = batch_size, shuffle=False)
 
-
-    model = CNNclassification().to(device)
-    criterion = torch.nn.CrossEntropyLoss().to(device)
-    optimizer = torch.optim.SGD(params = model.parameters(), lr = LR )
-    scheduler = None
-
-    import torchsummary
-    if mode == 'spec':
+    if preprocess_mode == 'spec':
+        model = CNNclassification().to(device)
+        criterion = torch.nn.CrossEntropyLoss().to(device)
+        optimizer = torch.optim.SGD(params = model.parameters(), lr = LR )
+        scheduler = None
         torchsummary.summary(model, (1, 128, 345))
+        model(torch.rand(batch_size, 1, 128, mfcc_y).to(device)) #spec
 
-    # model(torch.rand(batch_size, 1, n_mfcc, mfcc_y).to(device))
-    model(torch.rand(batch_size, 1, 128, mfcc_y).to(device)) #spec
+    elif preprocess_mode == 'MFCC':
+        model = CNNclassification().to(device)
+        criterion = torch.nn.CrossEntropyLoss().to(device)
+        optimizer = torch.optim.SGD(params = model.parameters(), lr = LR )
+        scheduler = None
+        torchsummary.summary(model, (1, n_mfcc, 345))
+        model(torch.rand(batch_size, 1, n_mfcc, mfcc_y).to(device))
 
     train(model, criterion, optimizer, train_loader, valid_loader, scheduler, device)
 

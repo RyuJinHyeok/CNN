@@ -24,7 +24,7 @@ def set_length(data):
 
     return result
 
-def preprocess_dataset(data):
+def preprocess_dataset_MFCC(data):
     mfccs = []
     for i in data:
         extracted_features = librosa.feature.mfcc(y=i,
@@ -35,3 +35,14 @@ def preprocess_dataset(data):
     mfccs = np.array(mfccs)
 
     return mfccs.reshape(-1, 1, mfccs.shape[1], mfccs.shape[2])
+
+def preprocess_dataset_melSpec(data):
+    specs = []
+    for i in tqdm(data):
+        extracted_features = librosa.feature.melspectrogram(y=i,
+                                              sr=SR)
+        specs.append(extracted_features)
+            
+    specs = np.array(specs)
+
+    return specs.reshape(-1, 1, specs.shape[1], specs.shape[2])
