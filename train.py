@@ -1,6 +1,8 @@
 from config import *
 from dataLoader import *
 from cnnlayers import *
+from spec_cnnlayers import *
+from stft_cnnlayers import *
 
 import torch
 import torch.optim as optim # 최적화 알고리즘들이 포함됨
@@ -24,9 +26,9 @@ def fit(train_X, train_y, valid_X, valid_y, mfcc_y):
     valid_loader = DataLoader(valid_data, batch_size = batch_size, shuffle=False)
 
     if preprocess_mode == 'spec':
-        model = CNNclassification().to(device)
+        model = SpecCNNclassification().to(device)
         criterion = torch.nn.CrossEntropyLoss().to(device)
-        optimizer = torch.optim.SGD(params = model.parameters(), lr = LR )
+        optimizer = torch.optim.Adagrad(params = model.parameters(), lr = LR)
         scheduler = None
         torchsummary.summary(model, (1, 128, 345))
         model(torch.rand(batch_size, 1, 128, mfcc_y).to(device)) #spec
@@ -38,6 +40,14 @@ def fit(train_X, train_y, valid_X, valid_y, mfcc_y):
         scheduler = None
         torchsummary.summary(model, (1, n_mfcc, 345))
         model(torch.rand(batch_size, 1, n_mfcc, mfcc_y).to(device))
+
+    elif preprocess_mode == 'stft':
+        model = stftCNNclassification().to(device)
+        criterion = torch.nn.CrossEntropyLoss().to(device)
+        optimizer = torch.optim.SGD(params = model.parameters(), lr = LR )
+        scheduler = None
+        torchsummary.summary(model, (1, 257, 345))
+        model(torch.rand(batch_size, 1, 257, mfcc_y).to(device))
 
     train(model, criterion, optimizer, train_loader, valid_loader, scheduler, device)
 

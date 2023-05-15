@@ -2,18 +2,18 @@ from tqdm.auto import tqdm
 import torch
 import torch.nn as nn # 신경망들이 포함됨
 
-class CNNclassification(torch.nn.Module):
+class stftCNNclassification(torch.nn.Module):
     def __init__(self):
-        super(CNNclassification, self).__init__()
+        super(stftCNNclassification, self).__init__()
         self.layer1 = torch.nn.Sequential(
-            nn.Conv2d(1, 32, kernel_size=(3, 7), stride=1, padding=0), #cnn layer
+            nn.Conv2d(1, 32, kernel_size=(6, 7), stride=1, padding=0), #cnn layer
             nn.ReLU(), #activation function
-            nn.MaxPool2d(kernel_size=(2, 4), stride=(2, 4), padding=0)) #pooling layer
+            nn.MaxPool2d(kernel_size=(4, 4), stride=(4, 4), padding=0)) #pooling layer
         
         self.layer2 = torch.nn.Sequential(
-            nn.Conv2d(32, 64, kernel_size=(3, 5), stride=1, padding=0), #cnn layer
+            nn.Conv2d(32, 64, kernel_size=(4, 5), stride=1, padding=0), #cnn layer
             nn.ReLU(), #activation function
-            nn.MaxPool2d(kernel_size=(2, 3), stride=(2, 3), padding=0)) #pooling layer
+            nn.MaxPool2d(kernel_size=(3, 3), stride=(3, 3), padding=0)) #pooling layer
         
         self.layer3 = torch.nn.Sequential(
             nn.Conv2d(64, 128, kernel_size=(3, 4), stride=1, padding=0), #cnn layer
@@ -21,24 +21,24 @@ class CNNclassification(torch.nn.Module):
             nn.MaxPool2d(kernel_size=(2, 3), stride=(2, 3), padding=0)) #pooling layer
         
         self.layer4 = torch.nn.Sequential(
-            nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=(1, 0)), #cnn layer
+            nn.Conv2d(128, 128, kernel_size=(3, 3), stride=1, padding=(0, 0)), #cnn layer
             nn.ReLU(), #activation function
-            nn.MaxPool2d(kernel_size=2, stride=2, padding=0)) #pooling layer
+            nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2), padding=0)) #pooling layer
         
         self.dropout = nn.Dropout()
         
         self.relu = nn.ReLU()
 
         self.fc_layer1 = nn.Sequential( 
-            nn.Linear(256, 256), #fully connected layer(ouput layer)
+            nn.Linear(768, 768), #fully connected layer(ouput layer)
         )
 
         self.fc_layer2 = nn.Sequential( 
-            nn.Linear(256, 128), #fully connected layer(ouput layer)
+            nn.Linear(768, 256), #fully connected layer(ouput layer)
         )    
 
         self.fc_layer3 = nn.Sequential( 
-            nn.Linear(128, 6), #fully connected layer(ouput layer)
+            nn.Linear(256, 6), #fully connected layer(ouput layer)
         )    
         
     def forward(self, x):
@@ -71,6 +71,6 @@ class CNNclassification(torch.nn.Module):
         return out
     
 
-# model = CNNclassification().to('cuda')
-# import torchsummary as t
-# t.summary(model, (1, 40, 345))
+model = stftCNNclassification().to('cuda')
+import torchsummary as t
+t.summary(model, (1, 257, 345))

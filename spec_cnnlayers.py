@@ -2,9 +2,9 @@ from tqdm.auto import tqdm
 import torch
 import torch.nn as nn # 신경망들이 포함됨
 
-class CNNclassification(torch.nn.Module):
+class SpecCNNclassification(torch.nn.Module):
     def __init__(self):
-        super(CNNclassification, self).__init__()
+        super(SpecCNNclassification, self).__init__()
         self.layer1 = torch.nn.Sequential(
             nn.Conv2d(1, 32, kernel_size=(5, 7), stride=1, padding=0), #cnn layer
             nn.ReLU(), #activation function
@@ -69,3 +69,7 @@ class CNNclassification(torch.nn.Module):
 
         out = self.fc_layer3(x)
         return out
+    
+model = SpecCNNclassification().to('cuda')
+import torchsummary as t
+t.summary(model, (1, 128, 345))

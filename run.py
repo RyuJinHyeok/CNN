@@ -83,6 +83,32 @@ def Train_dataset_save_melSpec(): # 모델 Train MFCC 데이터 세트 생성
     # numpy 배열로 데이터 Set 저장
     np_Dataset_save(dir_np_save,'train', preprocess_mode, train_X,train_y)
     np_Dataset_save(dir_np_save,'valid', preprocess_mode, valid_X,valid_y)
+
+'''2. Make STFT dataSet'''
+def Train_dataset_save_stft(): # 모델 Train stft 데이터 세트 생성
+    print("STFT data set")
+    # Wav 파일 : col1 = wav signal, col2 = 정답 lable (파일 이름에서 추출) --> Pandas dataFrame 반환
+    train_wav = train_dataset()  # Train data
+    valid_wav = valid_dataset()  # Validation data
+
+    # wav signal과 정답 label 분리
+    train_x, train_y = split(train_wav) # Train data
+    valid_x, valid_y = split(valid_wav) # Validation data
+
+    # padding 수행
+    train_x = set_length(train_x) # Train data
+    valid_x = set_length(valid_x) # Validation data
+
+    # mel-spectroram로 데이터 전처리 수행
+    train_X = preprocess_dataset_stft(train_x) # Train data
+    valid_X = preprocess_dataset_stft(valid_x) # Validation data
+
+    print(train_X.shape)
+
+    # numpy 배열로 데이터 Set 저장
+    np_Dataset_save(dir_np_save,'train', preprocess_mode, train_X,train_y)
+    np_Dataset_save(dir_np_save,'valid', preprocess_mode, valid_X,valid_y)
+
 # -------- NOTICE ----------
 # you must modify config.py to suit your environment // 실행 시키기 전, config.py를 수정하세요.
 
@@ -95,16 +121,20 @@ seed_everything(929)  # Random Seed
 # mode 3 : start from test data processing + eval
 
 
-mode = 2
+mode = 3
 
 if mode == 1:  # Train data save
-    if preprocess_mode == 'MFCC':
+    if preprocess_mode == 'mfcc':
         print("Train data save=MFCC")
         Train_dataset_save_MFCC()
 
     elif preprocess_mode == 'spec':
         print("Train data save=spectrogram")
         Train_dataset_save_melSpec()
+
+    elif preprocess_mode == 'stft':
+        print("Train data save=stft")
+        Train_dataset_save_stft()
 
 elif mode == 2: # Train
     train_X_save_load = np.load("%s/%s_train_X_SAVE.npy"%(dir_np_save,preprocess_mode))

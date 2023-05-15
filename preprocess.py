@@ -46,3 +46,13 @@ def preprocess_dataset_melSpec(data):
     specs = np.array(specs)
 
     return specs.reshape(-1, 1, specs.shape[1], specs.shape[2])
+
+def preprocess_dataset_stft(data):
+    stfts = []
+    for i in tqdm(data):
+        extracted_features = librosa.stft(y=i, n_fft=512, hop_length=512)
+        stfts.append(extracted_features)
+            
+    stfts = np.array(stfts)
+
+    return stfts.reshape(-1, 1, stfts.shape[1], stfts.shape[2])

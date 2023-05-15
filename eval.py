@@ -8,6 +8,8 @@ from config import *
 from preprocess import *
 from dataLoader import *
 from cnnlayers import *
+from spec_cnnlayers import *
+from stft_cnnlayers import *
 
 from torch.utils.data import DataLoader # 학습 및 배치로 모델에 넣어주기 위한 툴
 
@@ -67,9 +69,15 @@ def result(df,preds,expInfo=None): # 결과 생성
         os.makedirs(result_save)
 
     """1. Confusion_matrix 출력"""
-    cm = confusion_matrix(answer_arr,preds) # 정답(x축)값, 예측(Y축)값을 이용하여 Confusion Matrix 계산
+    cm = confusion_matrix(y_true=answer_arr, y_pred=preds) # 정답(x축)값, 예측(Y축)값을 이용하여 Confusion Matrix 계산
     plt.title('Confusion Matrix') # 제목 추가
-    sns.heatmap(cm, annot=True, cmap='Blues') # 도시
+    plt.figure(figsize=(12, 10))
+    sns.heatmap(cm, annot=True, cmap='Blues', 
+                annot_kws={'size': 18},
+                xticklabels=['Gun Shot', 'Emergency Vehicle', 'Danger Alert', 'Vehicle Sound', 'Car Horn', 'Bike Horn'],
+                yticklabels=['Gun Shot', 'Emergency Vehicle', 'Danger Alert', 'Vehicle Sound', 'Car Horn', 'Bike Horn']) # 도시    
+    plt.xlabel('predictions')
+    plt.ylabel('actual classes')
     plt.savefig('%sconfusion_matrix_%s.png'%(result_save, expInfo)) # 그래프를 이미지 파일로 저장
 
 
@@ -179,18 +187,25 @@ def evaluation_all(test_wav):
     test_x = np.array(test_wav.data)
     test_x = set_length(test_x)
 
-    if mode == 'spec':
-        import spectrogram as sp
-        test_X = sp.preprocess_dataset(test_x)
-    elif mode == 'mfcc':
-        test_X = preprocess_dataset(test_x)
+    if preprocess_mode == 'spec':
+        test_X = preprocess_dataset_melSpec(test_x)
+    elif preprocess_mode == 'mfcc':
+        test_X = preprocess_dataset_MFCC(test_x)
+    elif preprocess_mode == 'stft':
+        test_X = preprocess_dataset_stft(test_x)
 
     test_data = CustomDataset(X=test_X, y= None, train_mode=False)
     test_loader = DataLoader(test_data, batch_size = batch_size, shuffle=False)
 
-
     checkpoint = torch.load(model_save + model_name + '.pth')
-    model = CNNclassification().to(device)
+
+    if preprocess_mode == 'spec':
+        model = SpecCNNclassification().to(device)
+    elif preprocess_mode == 'mfcc':
+        model = CNNclassification().to(device)
+    elif preprocess_mode == 'stft':
+        model = stftCNNclassification().to(device)
+    
     model.load_state_dict(checkpoint)
 
 
