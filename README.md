@@ -1,5 +1,5 @@
-# 🔊audio-classification-CNN
-머신러닝1 팀프로젝트 audio classification 실험모델 CNN입니다.
+# 🔊emergency-sound-classification
+머신러닝1 팀프로젝트 '위험/위급 상황 음향 분류 AI 모델 제작' 결과물 입니다.
 
 <br>
 
